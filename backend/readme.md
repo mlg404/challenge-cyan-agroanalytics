@@ -6,8 +6,6 @@
   Desafio: Cyan Agroanalytics
 </h3>
 
-<p>Este é o backend da aplicação do desafio</p>
-
 <blockquote align="center">“O clima corresponde por até 50% da sua produtividade.”!</blockquote>
 
 <p align="center">
@@ -57,7 +55,7 @@ Para clonar e usar esta aplicação, você precisará do [Git](https://git-scm.c
 
 Você precisa ter um banco de dados Postgres (com a extensão do Postgis) previamente instalados.
 
-Após isso, configure as credenciais no arquivo `.env`
+Após isso, configure as credenciais no arquivo `example.env` e renomeie-o para apenas `.env`
 
 ```bash
 # Clonar este repositório
