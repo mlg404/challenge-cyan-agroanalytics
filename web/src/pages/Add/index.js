@@ -1,4 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef} from 'react';
+import { FaMapMarkerAlt, FaCheck } from 'react-icons/fa'
+import Modal from 'react-modal'
+import { useForm } from "react-hook-form";
 
 import './styles.css'
 
@@ -6,10 +9,45 @@ import Menu from '../../components/Menu'
 
 import api from '../../services/api'
 
+const customStyles = {
+  content : {
+    top                   : '50%',
+    left                  : '50%',
+    right                 : 'auto',
+    bottom                : 'auto',
+    marginRight           : '-50%',
+    transform             : 'translate(-50%, -50%)',
+    width                 : '45vw',
+    height                : '60vh'
+  }
+};
+
+
 const Add = () => {
-  const [mills, setMills] = useState([]);
-  const [harvests, setHarvests] = useState([]);
-  const [farms, setFarms] = useState([]);
+  const 
+    [mills, setMills] = useState([]),
+    [harvests, setHarvests] = useState([]),
+    [farms, setFarms] = useState([]),
+    [modalIsOpen,setIsOpen] = useState(false);
+  const { register, handleSubmit } = useForm();
+  const 
+    formMillRef = useRef(null),
+    formHarvestRef = useRef(null),
+    formFarmRef = useRef(null),
+    formFieldRef = useRef(null);
+
+  function openModal() {
+    setIsOpen(true);
+  }
+  
+  function afterOpenModal() {
+    // references are now sync'd and can be accessed.
+    // subtitle.style.color = '#f00';
+  }
+
+  function closeModal(){
+    setIsOpen(false);
+  }
 
   const getAll = async () => {
     const responseMills = await api.get('mills');
@@ -23,76 +61,185 @@ const Add = () => {
   useEffect(() => {
     getAll();
   }, [])
-  
+
+
+  const handleRegisterMill = ({addMillName}) => {
+    const data = {
+      name: addMillName
+    }
+    handleRegisterApi(data, 'mills')
+  }
+
+  const handleRegisterHarvest = ({
+    addHarvestCode, 
+    addHarvestStart, 
+    addHarvestEnd, 
+    addHarvestMill
+  }) => {
+    const data = {
+      code: addHarvestCode,
+      mill_id: addHarvestMill,
+      start_date: addHarvestStart,
+      end_date: addHarvestEnd
+    }
+    handleRegisterApi(data, 'harvests')
+  }
+
+  const handleRegisterFarm = ({addFarmCode, addFarmName, addFarmHarvest}) => {
+    const data = {
+      code: addFarmCode,
+      name: addFarmName,
+      harvest_id: addFarmHarvest
+    }
+    handleRegisterApi(data, 'farms')
+  }
+
+  const handleRegisterField = ({addFieldCode, addFieldFarm}) => {
+    const data = {
+      code: addFieldCode,
+      farm_id: addFieldFarm,
+
+    }
+    handleRegisterApi(data, 'fields')
+  }
+
+  const handleRegisterApi = async (data, type) => {
+    try {
+      const response = await api.post(type, data);
+      console.log(response)
+      
+    } catch (error) {
+      console.log(error.response)
+    }
+
+    formMillRef.current.reset();
+    formHarvestRef.current.reset();
+    formFarmRef.current.reset();
+    formFieldRef.current.reset();
+  }
 
   return (
-    <div id="page-map" className="page-add-menu">
+    <div id="page-map" className="page-add-menu" >
       <Menu />
       <div id="page-container">
         <div id="add-box">
-          <h1>Mill</h1>
-          <label>Name</label>
-          <input name="add-mill-name" type="text"/>
+          <form ref={formMillRef} onSubmit={handleSubmit(handleRegisterMill)}>
+            <h1>Mill</h1>
+            <label>Name</label>
+            <input name="addMillName" type="text" ref={register}/>
+            <div className="card-buttons">
+              <button className="success-button">
+                <FaCheck size={12} color="#fff"/>
+                <span>Save</span>
+              </button>
+            </div>
+          </form>
           
         </div>
         <div id="add-box">
-          <h1>Harvest</h1>
+         <form ref={formHarvestRef} onSubmit={handleSubmit(handleRegisterHarvest)}>
 
-          <label>Code</label>
-          <input name="add-harvest-code" type="text"/>
+            <h1>Harvest</h1>
 
-          <label>Start</label>
-          <input name="add-harvest-start" type="date"/>
+            <label>Code</label>
+            <input name="addHarvestCode" type="text" ref={register}/>
 
-          <label>End</label>
-          <input name="add-harvest-end" type="date"/>
+            <label>Start</label>
+            <input name="addHarvestStart" type="date" ref={register}/>
 
-          <label>Associate to Mill</label>
-          <input list="mills-list" name="add-harvest-mill" type="text"/>
-          <datalist id="mills-list">
-            {mills.map(mill => {
-              return (
-                <option key={mill.id} value={mill.id} >{mill.name}</option>
-              )
-            })}
-          </datalist>
-        </div>
-        <div id="add-box">
-          <h1>Farm</h1>
+            <label>End</label>
+            <input name="addHarvestEnd" type="date" ref={register}/>
 
-          <label>Code </label>
-          <input name="add-farm-code" type="text"/>
-
-          <label>Name </label>
-          <input name="add-farm-name" type="text"/>
-
-          <label>Associate to Harvest </label>
-          <input list="harvests-list" name="add-farm-harvest" type="text"/>
-          <datalist id="harvests-list" >
-            {harvests.map(harvest => {
-              return (
-                <option key={harvest.id} value={harvest.id} >{harvest.code}</option>
-              )
-            })}
-          </datalist>
+            <label>Associate to Mill</label>
+            <input list="mills-list" name="addHarvestMill" type="text" ref={register}/>
+            <datalist id="mills-list">
+              {mills.map(mill => {
+                return (
+                  <option key={mill.id} value={mill.id} >{mill.name}</option>
+                )
+              })}
+            </datalist>
+            <div className="card-buttons">
+              <button className="success-button">
+                <FaCheck size={12} color="#fff"/>
+                <span>Save</span>
+              </button>
+            </div>
+          </form>
         </div>
 
         <div id="add-box">
-          <h1>Field</h1>
+          <form ref={formFarmRef} onSubmit={handleSubmit(handleRegisterFarm)}>
+            <h1>Farm</h1>
 
-          <label>Code </label>
-          <input name="add-field-code" type="text"/>
+            <label>Code </label>
+            <input name="addFarmCode" type="text" ref={register} />
 
-          <label>Associate to Farm </label>
-          <input list="farms-list" name="add-field-farm" type="text"/>
-          <datalist id="farms-list" >
-            {farms.map(farm => {
-              return (
-                <option key={farm.id} value={farm.id} >{farm.code} - {farm.name}</option>
-              )
-            })}
-          </datalist>
+            <label>Name </label>
+            <input name="addFarmName" type="text" ref={register}/>
+
+            <label>Associate to Harvest </label>
+            <input list="harvests-list" name="addFarmHarvest" type="text" ref={register}/>
+            <datalist id="harvests-list" >
+              {harvests.map(harvest => {
+                return (
+                  <option key={harvest.id} value={harvest.id} >{harvest.code}</option>
+                )
+              })}
+            </datalist>
+            <div className="card-buttons">
+              <button className="success-button">
+                <FaCheck size={12} color="#fff"/>
+                <span>Save</span>
+              </button>
+            </div>
+          </form>
         </div>
+
+        <div id="add-box">
+          <form ref={formFieldRef} onSubmit={handleSubmit(handleRegisterField)}>
+            <h1>Field</h1>
+
+            <label>Code </label>
+            <input name="addFieldCode" type="text" ref={register}/>
+
+            <label>Associate to Farm </label>
+            <input list="farms-list" name="addFieldFarm" type="text" ref={register}/>
+            <datalist id="farms-list" >
+              {farms.map(farm => {
+                return (
+                  <option key={farm.id} value={farm.id} >{farm.code} - {farm.name}</option>
+                )
+              })}
+            </datalist>
+            
+            <div className="card-buttons">
+              <button type="button" className="blue-button" onClick={openModal}>
+                <FaMapMarkerAlt size={12} color="#fff"/>
+                <span>Add geopoints</span>
+              </button>
+
+              <button className="success-button">
+                <FaCheck size={12} color="#fff"/>
+                <span>Save</span>
+              </button>
+            </div>
+          </form>
+        </div>
+
+      
+        <Modal
+          isOpen={modalIsOpen}
+          onAfterOpen={afterOpenModal}
+          onRequestClose={closeModal}
+          style={customStyles}
+          contentLabel="Example Modal"
+          ariaHideApp={false}
+        >
+          <div id="modal-content">
+            
+          </div>
+        </Modal>
         
         
       </div>
