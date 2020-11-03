@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef} from 'react';
-import { FaMapMarkerAlt, FaCheck } from 'react-icons/fa'
+import { FaMapMarkerAlt, FaCheck, FaTrashAlt } from 'react-icons/fa'
 import Modal from 'react-modal'
 import { useForm } from "react-hook-form";
 
@@ -28,7 +28,8 @@ const Add = () => {
     [mills, setMills] = useState([]),
     [harvests, setHarvests] = useState([]),
     [farms, setFarms] = useState([]),
-    [modalIsOpen,setIsOpen] = useState(false);
+    [modalIsOpen,setIsOpen] = useState(false),
+    [geopoints, setGeopoints] = useState([])
   const { register, handleSubmit } = useForm();
   const 
     formMillRef = useRef(null),
@@ -95,11 +96,27 @@ const Add = () => {
   }
 
   const handleRegisterField = ({addFieldCode, addFieldFarm}) => {
+    const coordsArray = [];
+    geopoints.map(point => {
+      coordsArray.push([point.lng, point.lat])
+      return null
+    })
     const data = {
       code: addFieldCode,
       farm_id: addFieldFarm,
+      gps: {
+        crs: {
+            type: "name",
+            properties: {
+              name: "EPSG:4326"
+            }
+          },
+          type: "Polygon",
+          coordinates: [coordsArray]
+        }
 
     }
+    setGeopoints([])
     handleRegisterApi(data, 'fields')
   }
 
@@ -116,6 +133,15 @@ const Add = () => {
     formHarvestRef.current.reset();
     formFarmRef.current.reset();
     formFieldRef.current.reset();
+  }
+
+  const addGeopoint = () => {
+    setGeopoints([...geopoints, { lat: 0, lng: 0}])
+  }
+  const removeGeopoint = (index) => {
+    const newGeopoints = [...geopoints];
+    newGeopoints.splice(index, 1)
+    setGeopoints(newGeopoints)
   }
 
   return (
@@ -137,7 +163,7 @@ const Add = () => {
           
         </div>
         <div id="add-box">
-         <form ref={formHarvestRef} onSubmit={handleSubmit(handleRegisterHarvest)}>
+          <form ref={formHarvestRef} onSubmit={handleSubmit(handleRegisterHarvest)}>
 
             <h1>Harvest</h1>
 
@@ -167,7 +193,6 @@ const Add = () => {
             </div>
           </form>
         </div>
-
         <div id="add-box">
           <form ref={formFarmRef} onSubmit={handleSubmit(handleRegisterFarm)}>
             <h1>Farm</h1>
@@ -195,7 +220,6 @@ const Add = () => {
             </div>
           </form>
         </div>
-
         <div id="add-box">
           <form ref={formFieldRef} onSubmit={handleSubmit(handleRegisterField)}>
             <h1>Field</h1>
@@ -227,7 +251,6 @@ const Add = () => {
           </form>
         </div>
 
-      
         <Modal
           isOpen={modalIsOpen}
           onAfterOpen={afterOpenModal}
@@ -237,7 +260,36 @@ const Add = () => {
           ariaHideApp={false}
         >
           <div id="modal-content">
-            
+            <h1>Field geolocalization</h1>
+            <small>Insert points to form a polygon 
+              with the area of the Fields. To close the polygon your last point must be equalts to your first point</small>
+              {geopoints.map((point, index) => (
+                <div key={index} className="point-group">
+                  <div>
+                    <label>Latitude</label>
+                    <input className="modal-input" onChange={(e) => geopoints[index].lat = e.target.value} type="text" />
+                  </div>
+                  <div>
+                    <label>Longitude</label>
+                    <input className="modal-input" onChange={(e) => geopoints[index].lng = e.target.value} type="text" />
+                  </div>
+                  <button onClick={() => removeGeopoint(index)} type="button" className="trash-button">
+                    <FaTrashAlt size={16} color="#fff"/>
+                  </button>
+                </div>
+
+              ))}
+              <div className="modal-buttons-div">
+                <button onClick={addGeopoint} type="button" className="blue-button button-modal">
+                  <FaMapMarkerAlt size={12} color="#fff"/>
+                  <span>Add point</span>
+                </button>
+                <br />
+                <button onClick={closeModal} type="button" className="button-modal blue-button">
+                  <FaCheck size={12} color="#fff"/>
+                  <span>Save and close</span>
+                </button>
+              </div>
           </div>
         </Modal>
         
