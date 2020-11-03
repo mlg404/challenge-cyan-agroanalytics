@@ -20,7 +20,7 @@ class FieldController {
       where: { code: req.body.code },
     });
     if (fieldExists) {
-      return res.status(401).json({ error: 'Field already registered' });
+      return res.status(400).json({ error: 'Field already registered' });
     }
     const field = await Field.create(req.body);
     return res.json(field);

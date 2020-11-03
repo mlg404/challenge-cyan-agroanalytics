@@ -15,7 +15,7 @@ class MillController {
       where: { name: req.body.name },
     });
     if (millExists) {
-      return res.status(401).json({ error: 'Mill already registered' });
+      return res.status(400).json({ error: 'Mill already registered' });
     }
     const mill = await Mill.create(req.body);
     return res.json(mill);

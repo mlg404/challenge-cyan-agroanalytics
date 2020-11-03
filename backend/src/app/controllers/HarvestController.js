@@ -19,7 +19,7 @@ class HarvestController {
       where: { code: req.body.code },
     });
     if (harvestExists) {
-      return res.status(401).json({ error: 'Harvest already registered' });
+      return res.status(400).json({ error: 'Harvest already registered' });
     }
     const harvest = await Harvest.create(req.body);
     return res.json(harvest);

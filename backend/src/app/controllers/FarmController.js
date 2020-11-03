@@ -22,7 +22,7 @@ class FarmController {
       },
     });
     if (farmExists) {
-      return res.status(401).json({ error: 'Farm already registered' });
+      return res.status(400).json({ error: 'Farm already registered' });
     }
     const farm = await Farm.create(req.body);
     return res.json(farm);
