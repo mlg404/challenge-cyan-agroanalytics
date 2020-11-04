@@ -1,5 +1,7 @@
 import * as Yup from 'yup';
 
+import sequelize from 'sequelize';
+
 import Mill from '../models/Mill';
 import Harvest from '../models/Harvest';
 import Farm from '../models/Farm';
@@ -48,8 +50,37 @@ class FieldController {
   }
 
   async show(req, res) {
+    let nested = '';
+    switch (req.query.type) {
+      case 'mills':
+        nested = '"farm->harvest->mill"';
+        break;
+
+      case 'harvests':
+        nested = '"farm->harvest"';
+        break;
+
+      case 'farms':
+        nested = '"farm"';
+        break;
+
+      default:
+        nested = '"Field"';
+        break;
+    }
+    delete req.query.type;
+
+    const keyValues = Object.entries(req.query);
+
+    const literalQuery = keyValues.reduce((acc, curr, index) => {
+      let queryString = acc;
+      queryString += `${nested}.${curr[0]} = '${curr[1]}'`;
+      if (index === keyValues.length) queryString += ' AND ';
+      return queryString;
+    }, '');
+
     const fields = await Field.findAll({
-      where: req.query,
+      where: sequelize.literal(literalQuery),
       include: [
         {
           model: Farm,
