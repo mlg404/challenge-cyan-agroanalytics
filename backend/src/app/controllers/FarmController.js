@@ -4,6 +4,7 @@ import { Op } from 'sequelize';
 import Mill from '../models/Mill';
 import Harvest from '../models/Harvest';
 import Farm from '../models/Farm';
+import Field from '../models/Field';
 
 class FarmController {
   async store(req, res) {
@@ -51,6 +52,7 @@ class FarmController {
 
   async show(req, res) {
     const farms = await Farm.findAll({
+      where: req.query,
       include: [
         {
           model: Harvest,
@@ -61,6 +63,9 @@ class FarmController {
               as: 'mill',
             },
           ],
+        },
+        {
+          model: Field,
         },
       ],
       attributes: ['id', 'code', 'name', 'created_at', 'updated_at'],

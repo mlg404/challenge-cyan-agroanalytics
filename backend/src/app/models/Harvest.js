@@ -16,6 +16,10 @@ class Harvest extends Model {
         mill_id: {
           type: Sequelize.INTEGER,
           allowNull: false,
+          references: {
+            model: 'Mill',
+            key: 'id',
+          },
         },
         start_date: {
           type: Sequelize.DATE,
@@ -38,6 +42,9 @@ class Harvest extends Model {
     this.belongsTo(models.Mill, {
       foreignKey: 'mill_id',
       as: 'mill',
+    });
+    this.hasMany(models.Farm, {
+      foreignKey: 'harvest_id',
     });
   }
 }

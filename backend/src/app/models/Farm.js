@@ -11,7 +11,13 @@ class Farm extends Model {
         },
         code: Sequelize.STRING,
         name: Sequelize.STRING,
-        harvest_id: Sequelize.INTEGER,
+        harvest_id: {
+          type: Sequelize.INTEGER,
+          references: {
+            model: 'Harvest',
+            key: 'id',
+          },
+        },
       },
       {
         sequelize,
@@ -25,6 +31,9 @@ class Farm extends Model {
     this.belongsTo(models.Harvest, {
       foreignKey: 'harvest_id',
       as: 'harvest',
+    });
+    this.hasMany(models.Field, {
+      foreignKey: 'farm_id',
     });
   }
 }

@@ -49,6 +49,7 @@ class FieldController {
 
   async show(req, res) {
     const fields = await Field.findAll({
+      where: req.query,
       include: [
         {
           model: Farm,

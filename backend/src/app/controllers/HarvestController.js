@@ -2,6 +2,8 @@ import * as Yup from 'yup';
 
 import Mill from '../models/Mill';
 import Harvest from '../models/Harvest';
+import Farm from '../models/Farm';
+import Field from '../models/Field';
 
 class HarvestController {
   async store(req, res) {
@@ -49,11 +51,18 @@ class HarvestController {
 
   async show(req, res) {
     const harvests = await Harvest.findAll({
+      where: req.query,
       include: [
         {
           model: Mill,
           as: 'mill',
           attributes: ['id', 'name'],
+        },
+        {
+          model: Farm,
+          include: {
+            model: Field,
+          },
         },
       ],
       attributes: [
