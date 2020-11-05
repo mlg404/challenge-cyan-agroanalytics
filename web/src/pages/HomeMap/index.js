@@ -11,18 +11,40 @@ import { FaMapMarkerAlt } from 'react-icons/fa'
 
 import './styles.css'
 import 'leaflet/dist/leaflet.css'
+import 'react-accessible-accordion/dist/fancy-example.css';
 
 import Menu from '../../components/Menu'
-import MapPupup from '../../components/MapPopup'
+import MapPopup from '../../components/MapPopup'
+import MapFilter from '../../components/MapFilter'
 
 import api from '../../services/api'
 
 const HomeMap = () => {
-  const [fields, setFields] = useState([])
+  const [fields, setFields] = useState([]);
 
   useEffect(() => {
     getFields();
   }, [])
+
+  const getFields = async (parameters) => {
+
+    let  { data } = await api.get('fields', { params: parameters});
+    console.log(data)
+
+    const delimiterArea = data.map((field) => {
+      return {
+        type: "Feature",
+        geometry: field.gps,
+        properties:{
+          id: field.id,
+          farmCode:field.code,
+          farm: field.farm,
+        }
+      }
+    })
+    setFields(delimiterArea);
+  }
+
 
   const SetInitialLocation = () => {
     const map = useMap();
@@ -47,22 +69,22 @@ const HomeMap = () => {
     localStorage.setItem('userLocation', JSON.stringify([lat,lng]))
   }
 
-  const getFields = async (parameters) => {
-    const  { data } = await api.get('fields');
-    const delimiterArea = data.map((field) => {
-      delete field.gps.crs;
-      return {
-        type: "Feature",
-        geometry: field.gps,
-        properties:{
-          id: field.id,
-          farmCode:field.code,
-          farm: field.farm,
-        }
-      }
+  const handleSubmit = (event) => {
+    const formData = new FormData(event.target);
+    event.preventDefault();
+    console.log([...formData])
+    const removeEmpty = [...formData].filter(fdata => {
+      if (fdata[1] !== "") return fdata
+
+      return null
     })
-    setFields(delimiterArea);
-  }
+    const data = {}
+    removeEmpty.map(item => {
+      data[item[0]] = item[1]
+      return null
+    });
+    getFields(data);
+}
 
   return (
     <div id="page-map">
@@ -83,7 +105,7 @@ const HomeMap = () => {
         <GeoJSON 
           key={fields}
           data={fields}
-          onEachFeature={MapPupup}
+          onEachFeature={MapPopup}
         />
 
         <MapConsumer>
@@ -96,6 +118,9 @@ const HomeMap = () => {
           )
         }}
         </MapConsumer>
+
+        <MapFilter submitFc={handleSubmit}/>
+        
 
       </MapContainer>
     </div>

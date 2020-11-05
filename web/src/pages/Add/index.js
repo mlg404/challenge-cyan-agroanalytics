@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef} from 'react';
 import { FaMapMarkerAlt, FaCheck, FaTrashAlt } from 'react-icons/fa'
 import Modal from 'react-modal'
 import { useForm } from "react-hook-form";
+import { useToasts } from 'react-toast-notifications'
+
 
 import './styles.css'
 
@@ -36,6 +38,8 @@ const Add = () => {
     formHarvestRef = useRef(null),
     formFarmRef = useRef(null),
     formFieldRef = useRef(null);
+
+    const { addToast } = useToasts();
 
   function openModal() {
     setIsOpen(true);
@@ -124,11 +128,12 @@ const Add = () => {
     try {
       const response = await api.post(type, data);
       console.log(response)
+      addToast('The item was successfully added!', { appearance: 'success' })
       
     } catch (error) {
       console.log(error.response)
+      addToast('Error to store item.', { appearance: 'error' })
     }
-
     formMillRef.current.reset();
     formHarvestRef.current.reset();
     formFarmRef.current.reset();
