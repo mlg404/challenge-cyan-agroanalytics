@@ -16,7 +16,7 @@ const Routes = () => {
       addToast(message, { appearance: 'info' })
     });
 
-  }, [])
+  }, [addToast])
   return (
     <BrowserRouter>
       <Switch>
