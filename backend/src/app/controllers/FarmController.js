@@ -1,5 +1,6 @@
 import * as Yup from 'yup';
 import { Op } from 'sequelize';
+import { broadcastMessage } from '../../websocket';
 
 import Mill from '../models/Mill';
 import Harvest from '../models/Harvest';
@@ -26,6 +27,10 @@ class FarmController {
       return res.status(400).json({ error: 'Farm already registered' });
     }
     const farm = await Farm.create(req.body);
+    broadcastMessage(
+      'new',
+      `New Farm registered with name "${farm.name} and code "${farm.code}"!`
+    );
     return res.json(farm);
   }
 

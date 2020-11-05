@@ -1,4 +1,5 @@
 import * as Yup from 'yup';
+import { broadcastMessage } from '../../websocket';
 
 import Mill from '../models/Mill';
 import Harvest from '../models/Harvest';
@@ -24,6 +25,10 @@ class HarvestController {
       return res.status(400).json({ error: 'Harvest already registered' });
     }
     const harvest = await Harvest.create(req.body);
+    broadcastMessage(
+      'new',
+      `New Harvest registered with code "${harvest.code}"!`
+    );
     return res.json(harvest);
   }
 

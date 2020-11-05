@@ -1,6 +1,6 @@
 import * as Yup from 'yup';
-
 import sequelize from 'sequelize';
+import { broadcastMessage } from '../../websocket';
 
 import Mill from '../models/Mill';
 import Harvest from '../models/Harvest';
@@ -25,6 +25,7 @@ class FieldController {
       return res.status(400).json({ error: 'Field already registered' });
     }
     const field = await Field.create(req.body);
+    broadcastMessage('new', `New Field registered with code "${field.code}"!`);
     return res.json(field);
   }
 

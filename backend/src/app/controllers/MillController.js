@@ -1,4 +1,5 @@
 import * as Yup from 'yup';
+import { broadcastMessage } from '../../websocket';
 
 import Mill from '../models/Mill';
 import Harvest from '../models/Harvest';
@@ -21,6 +22,7 @@ class MillController {
       return res.status(400).json({ error: 'Mill already registered' });
     }
     const mill = await Mill.create(req.body);
+    broadcastMessage('new', `New Mill registered with name "${mill.name}"!`);
     return res.json(mill);
   }
 
