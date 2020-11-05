@@ -16,6 +16,10 @@ class Field extends Model {
         farm_id: {
           type: Sequelize.INTEGER,
           allowNull: false,
+          references: {
+            model: 'Farm',
+            key: 'id',
+          },
         },
         gps: {
           type: Sequelize.GEOMETRY('POLYGON'),

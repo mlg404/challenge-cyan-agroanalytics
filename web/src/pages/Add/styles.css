@@ -4,15 +4,6 @@
 
 }
 
-input {
-  width: 100%;
-  height:  48px;
-  border-radius: 4px;
-  background: #F8F8FC;
-  border: 1px solid #E6E6F0;
-  outline: 0;
-  padding: 0 8px;
-}
 
 #page-container { 
   margin-top:3%;
@@ -33,9 +24,16 @@ input {
   border: 1px solid #E5E5E5;
   box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.03);
   border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+}
+#page-container #add-box form {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
-#page-container #add-box h1 {
+#page-container #add-box   h1 {
   color: #333;
   text-align: center;
 }
@@ -45,5 +43,107 @@ input {
   font-size: 14px
 }
 #page-container #add-box input {
-  margin-bottom: 16px
+  margin-bottom: 16px;
+  width: 100%;
+  height:  48px;
+  border-radius: 4px;
+  background: #F8F8FC;
+  border: 1px solid #E6E6F0;
+  outline: 0;
+  padding: 0 8px;
+}
+
+#page-container #add-box .card-buttons{
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: flex-end;
+  row-gap: 8px;
+}
+
+#page-container #add-box .card-buttons button, .blue-button {
+  width: 100%;
+  height:  48px;
+  border-radius: 4px;
+  background: #F8F8FC;
+  border: 1px solid #E6E6F0;
+  outline: 0;
+  padding: 0 8px;
+  cursor: pointer;
+  transition: opacity 0.5s
+}
+
+#page-container #add-box .card-buttons button:hover, .blue-button:hover{
+  opacity: .675
+}
+
+.blue-button {
+  background: #00AEEF!important;
+  border-color: #1FC3FF!important;
+  color: #F8F8FC
+}
+
+#page-container #add-box .card-buttons .success-button {
+  background: #00dbaa;
+  border-color: #00efb9;
+  color: #F8F8FC
+}
+
+#page-container #add-box button > span, .blue-button > span {
+  margin-left: 8px
+}
+
+.ReactModal__Overlay {
+  z-index: 999
+}
+
+#modal-content {
+  color: black;
+  display: flex;
+  flex-direction: column;
+}
+
+.button-modal {
+  max-width: 200px
+}
+
+.point-group{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  column-gap: 20px;
+}
+
+.modal-input {
+  margin-bottom: 16px;
+  width: 100%;
+  height:  48px;
+  border-radius: 4px;
+  background: #F8F8FC;
+  border: 1px solid #E6E6F0;
+  outline: 0;
+  padding: 0 8px;
+}
+
+.trash-button {
+  width: 72px;
+  height:  72px;
+  border-radius: 4px;
+  background: #f54100;
+  border: 1px solid #c43400;
+  outline: 0;
+  padding: 0 8px;
+  cursor: pointer;
+  transition: opacity 0.5s
+}
+
+.trash-button:hover{
+  opacity: .675;
+}
+
+.modal-buttons-div {
+  display: flex;
+  flex-direction: row;
+  column-gap: 8px;
 }

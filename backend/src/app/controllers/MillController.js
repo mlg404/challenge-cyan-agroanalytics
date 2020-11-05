@@ -1,6 +1,10 @@
 import * as Yup from 'yup';
+import { broadcastMessage } from '../../websocket';
 
 import Mill from '../models/Mill';
+import Harvest from '../models/Harvest';
+import Farm from '../models/Farm';
+import Field from '../models/Field';
 
 class MillController {
   async store(req, res) {
@@ -15,9 +19,10 @@ class MillController {
       where: { name: req.body.name },
     });
     if (millExists) {
-      return res.status(401).json({ error: 'Mill already registered' });
+      return res.status(400).json({ error: 'Mill already registered' });
     }
     const mill = await Mill.create(req.body);
+    broadcastMessage('new', `New Mill registered with name "${mill.name}"!`);
     return res.json(mill);
   }
 
@@ -31,7 +36,18 @@ class MillController {
   }
 
   async show(req, res) {
-    const mills = await Mill.findAll();
+    const mills = await Mill.findAll({
+      where: req.query,
+      include: {
+        model: Harvest,
+        include: {
+          model: Farm,
+          include: {
+            model: Field,
+          },
+        },
+      },
+    });
     if (!mills) {
       return res.status(200).json({});
     }

@@ -1,9 +1,11 @@
 import * as Yup from 'yup';
 import { Op } from 'sequelize';
+import { broadcastMessage } from '../../websocket';
 
 import Mill from '../models/Mill';
 import Harvest from '../models/Harvest';
 import Farm from '../models/Farm';
+import Field from '../models/Field';
 
 class FarmController {
   async store(req, res) {
@@ -22,9 +24,13 @@ class FarmController {
       },
     });
     if (farmExists) {
-      return res.status(401).json({ error: 'Farm already registered' });
+      return res.status(400).json({ error: 'Farm already registered' });
     }
     const farm = await Farm.create(req.body);
+    broadcastMessage(
+      'new',
+      `New Farm registered with name "${farm.name} and code "${farm.code}"!`
+    );
     return res.json(farm);
   }
 
@@ -51,6 +57,7 @@ class FarmController {
 
   async show(req, res) {
     const farms = await Farm.findAll({
+      where: req.query,
       include: [
         {
           model: Harvest,
@@ -61,6 +68,9 @@ class FarmController {
               as: 'mill',
             },
           ],
+        },
+        {
+          model: Field,
         },
       ],
       attributes: ['id', 'code', 'name', 'created_at', 'updated_at'],

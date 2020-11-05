@@ -1,7 +1,10 @@
 import * as Yup from 'yup';
+import { broadcastMessage } from '../../websocket';
 
 import Mill from '../models/Mill';
 import Harvest from '../models/Harvest';
+import Farm from '../models/Farm';
+import Field from '../models/Field';
 
 class HarvestController {
   async store(req, res) {
@@ -19,9 +22,13 @@ class HarvestController {
       where: { code: req.body.code },
     });
     if (harvestExists) {
-      return res.status(401).json({ error: 'Harvest already registered' });
+      return res.status(400).json({ error: 'Harvest already registered' });
     }
     const harvest = await Harvest.create(req.body);
+    broadcastMessage(
+      'new',
+      `New Harvest registered with code "${harvest.code}"!`
+    );
     return res.json(harvest);
   }
 
@@ -49,11 +56,18 @@ class HarvestController {
 
   async show(req, res) {
     const harvests = await Harvest.findAll({
+      where: req.query,
       include: [
         {
           model: Mill,
           as: 'mill',
           attributes: ['id', 'name'],
+        },
+        {
+          model: Farm,
+          include: {
+            model: Field,
+          },
         },
       ],
       attributes: [

@@ -1,20 +1,21 @@
 #page-map aside {
   width: 220px;
-  height: 94vh;
+  height: 60vh;
   background: #F8F8F8;
   border: 1px solid #E5E5E5;
   box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.05);
   border-radius: 0px 40px 40px 0px;
   position: fixed;
-  z-index: 999!important;
+  z-index: 998!important;
   top: 3%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
   padding-top: 24px
-
 }
+
+
 
 #page-map aside img {
   width: 176px
@@ -68,4 +69,36 @@
 
 #page-map aside strong {
   font-weight: 800;
+}
+
+.open-menu {
+  position: fixed;
+  z-index: 1000;
+  bottom: 60px;
+  left:20px;
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #F8F8F8;
+  border: 1px solid #E5E5E5;
+  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.05);
+  border-radius: 4px;
+  cursor: pointer
+}
+
+
+.menu-button{
+
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #F8F8F8;
+  border: 1px solid #E5E5E5;
+  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.05);
+  border-radius: 4px;
+  cursor: pointer
 }

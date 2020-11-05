@@ -18,6 +18,12 @@ class Mill extends Model {
 
     return this;
   }
+
+  static associate(models) {
+    this.hasMany(models.Harvest, {
+      foreignKey: 'mill_id',
+    });
+  }
 }
 
 export default Mill;
