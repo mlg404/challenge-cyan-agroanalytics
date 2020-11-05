@@ -62,7 +62,7 @@ Após isso, configure as credenciais no arquivo `example.env` e renomeie-o para 
 $ git clone https://github.com/mlg404/challenge-cyan-agroanalytics.git
 
 # Aceder a este repositório
-$ cd challenge-cyan-agroanalytics
+$ cd challenge-cyan-agroanalytics/backend
 
 # Instalar dependências
 $ yarn install
